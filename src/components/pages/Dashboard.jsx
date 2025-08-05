@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import NotesList from "@/components/organisms/NotesList";
 import NoteEditor from "@/components/organisms/NoteEditor";
-import ApperIcon from "@/components/atoms/ApperIcon";
+import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 const Dashboard = () => {
   const { 
