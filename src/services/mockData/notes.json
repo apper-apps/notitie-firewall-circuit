@@ -1,0 +1,47 @@
+[
+  {
+    "Id": 1,
+    "title": "Vergadering plannen",
+    "content": "<h2>Vergadering Agenda</h2><p>Belangrijke punten om te bespreken:</p><ul><li>Q4 doelstellingen</li><li>Budget planning</li><li>Team updates</li></ul><p><strong>Datum:</strong> Volgende week dinsdag</p><p><em>Vergeet niet de presentatie voor te bereiden!</em></p>",
+    "folderId": "1",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T14:45:00Z",
+    "tags": ["werk", "vergadering", "planning"]
+  },
+  {
+    "Id": 2,
+    "title": "Boodschappenlijst",
+    "content": "<h3>Weekend boodschappen</h3><ul><li>Melk</li><li>Brood</li><li>Eieren</li><li>Appels</li><li>Koffie</li></ul><p>Extra: Controleer of we nog genoeg wasmiddel hebben.</p>",
+    "folderId": "2",
+    "createdAt": "2024-01-14T09:15:00Z",
+    "updatedAt": "2024-01-16T11:20:00Z",
+    "tags": ["persoonlijk", "boodschappen"]
+  },
+  {
+    "Id": 3,
+    "title": "Boek ideeën",
+    "content": "<h2>Interessante boeken om te lezen</h2><ol><li><strong>De Ontdekking van de Hemel</strong> - Harry Mulisch</li><li><strong>Het Achterhuis</strong> - Anne Frank</li><li><strong>Turks Fruit</strong> - Jan Wolkers</li></ol><p>Misschien ook kijken naar internationale bestsellers.</p>",
+    "folderId": "2",
+    "createdAt": "2024-01-12T16:45:00Z",
+    "updatedAt": "2024-01-13T12:30:00Z",
+    "tags": ["persoonlijk", "boeken", "lezen"]
+  },
+  {
+    "Id": 4,
+    "title": "Project Milestone Review",
+    "content": "<h2>Sprint Review Notities</h2><p>Wat ging goed:</p><ul><li>Alle user stories voltooid</li><li>Goede samenwerking team</li><li>Code kwaliteit verbeterd</li></ul><p>Verbeterpunten:</p><ul><li>Meer tijd voor testing</li><li>Betere documentatie</li></ul><p><em>Volgende sprint: focus op performance optimalisatie</em></p>",
+    "folderId": "1",
+    "createdAt": "2024-01-10T15:20:00Z",
+    "updatedAt": "2024-01-11T09:45:00Z",
+    "tags": ["werk", "project", "review"]
+  },
+  {
+    "Id": 5,
+    "title": "Vakantie planning",
+    "content": "<h2>Zomervakantie 2024</h2><p><strong>Mogelijke bestemmingen:</strong></p><ul><li>Frankrijk - Provence</li><li>Italië - Toscane</li><li>Spanje - Andalusië</li></ul><p>Budget: ongeveer €2000 per persoon</p><p>Datum: laatste twee weken van juli</p><p><em>Boek vroeg voor beste deals!</em></p>",
+    "folderId": "2",
+    "createdAt": "2024-01-08T20:10:00Z",
+    "updatedAt": "2024-01-09T14:25:00Z",
+    "tags": ["persoonlijk", "vakantie", "reizen"]
+  }
+]

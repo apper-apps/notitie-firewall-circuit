@@ -1,0 +1,23 @@
+[
+  {
+    "Id": 1,
+    "name": "Werk",
+    "color": "#FF6B35",
+    "createdAt": "2024-01-01T12:00:00Z",
+    "noteCount": 2
+  },
+  {
+    "Id": 2,
+    "name": "Persoonlijk",
+    "color": "#3498DB",
+    "createdAt": "2024-01-01T12:00:00Z",
+    "noteCount": 3
+  },
+  {
+    "Id": 3,
+    "name": "Projecten",
+    "color": "#27AE60",
+    "createdAt": "2024-01-05T10:30:00Z",
+    "noteCount": 0
+  }
+]
