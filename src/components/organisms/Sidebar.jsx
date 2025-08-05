@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../App";
+import folderService from "@/services/api/folderService";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import FolderItem from "@/components/molecules/FolderItem";
+import FolderModal from "@/components/organisms/FolderModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import FolderModal from "@/components/organisms/FolderModal";
-import folderService from "@/services/api/folderService";
+import Button from "@/components/atoms/Button";
 
 const Sidebar = ({ 
   selectedFolderId, 
@@ -92,7 +93,7 @@ const Sidebar = ({
             <span>Alle notities</span>
           </button>
           
-          <button
+<button
             onClick={() => {
               navigate("/settings");
               onClose?.();
@@ -106,6 +107,8 @@ const Sidebar = ({
             <ApperIcon name="Settings" size={16} />
             <span>Instellingen</span>
           </button>
+
+          <LogoutButton />
         </div>
       </div>
 
@@ -205,5 +208,28 @@ const Sidebar = ({
     </>
   );
 };
+
+// Logout Button Component
+const LogoutButton = () => {
+  const { logout } = React.useContext(AuthContext);
+  
+  const handleLogout = async () => {
+    if (window.confirm("Weet je zeker dat je wilt uitloggen?")) {
+      await logout();
+    }
+  };
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="w-full flex items-center space-x-3 p-2 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+    >
+      <ApperIcon name="LogOut" size={16} />
+      <span>Uitloggen</span>
+    </button>
+  );
+};
+
+// Import AuthContext at the top
 
 export default Sidebar;

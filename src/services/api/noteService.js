@@ -1,78 +1,437 @@
-import notesData from "@/services/mockData/notes.json";
-
-let notes = [...notesData];
-
 const noteService = {
   getAll: async () => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return [...notes].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title" } },
+          { field: { Name: "content" } },
+          { field: { Name: "folderId" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "createdAt" } },
+          { field: { Name: "updatedAt" } }
+        ],
+        orderBy: [
+          {
+            fieldName: "updatedAt",
+            sorttype: "DESC"
+          }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      return response.data.map(note => ({
+        Id: note.Id,
+        title: note.title || note.Name,
+        content: note.content || "",
+        folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+        Tags: note.Tags || "",
+        tags: note.Tags ? note.Tags.split(',') : [],
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching notes:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   },
 
   getById: async (id) => {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    const note = notes.find(n => n.Id === parseInt(id));
-    return note ? { ...note } : null;
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title" } },
+          { field: { Name: "content" } },
+          { field: { Name: "folderId" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "createdAt" } },
+          { field: { Name: "updatedAt" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById('note', id, params);
+      
+      if (!response || !response.data) {
+        return null;
+      }
+
+      const note = response.data;
+      return {
+        Id: note.Id,
+        title: note.title || note.Name,
+        content: note.content || "",
+        folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+        Tags: note.Tags || "",
+        tags: note.Tags ? note.Tags.split(',') : [],
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt
+      };
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching note with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
+    }
   },
 
   getByFolderId: async (folderId) => {
-    await new Promise(resolve => setTimeout(resolve, 250));
-    return notes
-      .filter(n => n.folderId === folderId)
-      .map(n => ({ ...n }))
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title" } },
+          { field: { Name: "content" } },
+          { field: { Name: "folderId" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "createdAt" } },
+          { field: { Name: "updatedAt" } }
+        ],
+        where: [
+          {
+            FieldName: "folderId",
+            Operator: "EqualTo",
+            Values: [parseInt(folderId)]
+          }
+        ],
+        orderBy: [
+          {
+            fieldName: "updatedAt",
+            sorttype: "DESC"
+          }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      return response.data.map(note => ({
+        Id: note.Id,
+        title: note.title || note.Name,
+        content: note.content || "",
+        folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+        Tags: note.Tags || "",
+        tags: note.Tags ? note.Tags.split(',') : [],
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching notes by folder:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   },
 
   search: async (query) => {
-    await new Promise(resolve => setTimeout(resolve, 200));
     if (!query.trim()) return [];
     
-    const searchTerm = query.toLowerCase();
-    return notes
-      .filter(n => 
-        n.title.toLowerCase().includes(searchTerm) ||
-        n.content.toLowerCase().includes(searchTerm) ||
-        n.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-      )
-      .map(n => ({ ...n }))
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "title" } },
+          { field: { Name: "content" } },
+          { field: { Name: "folderId" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "createdAt" } },
+          { field: { Name: "updatedAt" } }
+        ],
+        whereGroups: [
+          {
+            operator: "OR",
+            subGroups: [
+              {
+                conditions: [
+                  {
+                    fieldName: "title",
+                    operator: "Contains",
+                    values: [query]
+                  }
+                ]
+              },
+              {
+                conditions: [
+                  {
+                    fieldName: "content",
+                    operator: "Contains",
+                    values: [query]
+                  }
+                ]
+              },
+              {
+                conditions: [
+                  {
+                    fieldName: "Tags",
+                    operator: "Contains",
+                    values: [query]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        orderBy: [
+          {
+            fieldName: "updatedAt",
+            sorttype: "DESC"
+          }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      return response.data.map(note => ({
+        Id: note.Id,
+        title: note.title || note.Name,
+        content: note.content || "",
+        folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+        Tags: note.Tags || "",
+        tags: note.Tags ? note.Tags.split(',') : [],
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error searching notes:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   },
 
   create: async (noteData) => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const newNote = {
-      Id: Math.max(...notes.map(n => n.Id)) + 1,
-      title: noteData.title || "Nieuwe notitie",
-      content: noteData.content || "",
-      folderId: noteData.folderId || "2",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      tags: noteData.tags || []
-    };
-    notes.push(newNote);
-    return { ...newNote };
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        records: [
+          {
+            Name: noteData.title || "Nieuwe notitie",
+            title: noteData.title || "Nieuwe notitie",
+            content: noteData.content || "",
+            folderId: parseInt(noteData.folderId) || 2,
+            Tags: Array.isArray(noteData.tags) ? noteData.tags.join(',') : (noteData.Tags || "")
+          }
+        ]
+      };
+
+      const response = await apperClient.createRecord('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create note records:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              console.error(`${error.fieldLabel}: ${error.message}`);
+            });
+          });
+        }
+        
+        if (successfulRecords.length > 0) {
+          const note = successfulRecords[0].data;
+          return {
+            Id: note.Id,
+            title: note.title || note.Name,
+            content: note.content || "",
+            folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+            Tags: note.Tags || "",
+            tags: note.Tags ? note.Tags.split(',') : [],
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt
+          };
+        }
+      }
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating note:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
+    }
   },
 
   update: async (id, noteData) => {
-    await new Promise(resolve => setTimeout(resolve, 250));
-    const index = notes.findIndex(n => n.Id === parseInt(id));
-    if (index === -1) return null;
-    
-    notes[index] = {
-      ...notes[index],
-      ...noteData,
-      Id: parseInt(id),
-      updatedAt: new Date().toISOString()
-    };
-    return { ...notes[index] };
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        records: [
+          {
+            Id: parseInt(id),
+            Name: noteData.title || "Nieuwe notitie",
+            title: noteData.title || "Nieuwe notitie",
+            content: noteData.content || "",
+            folderId: parseInt(noteData.folderId) || 2,
+            Tags: Array.isArray(noteData.tags) ? noteData.tags.join(',') : (noteData.Tags || "")
+          }
+        ]
+      };
+
+      const response = await apperClient.updateRecord('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update note records:${failedUpdates}`);
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              console.error(`${error.fieldLabel}: ${error.message}`);
+            });
+          });
+        }
+        
+        if (successfulUpdates.length > 0) {
+          const note = successfulUpdates[0].data;
+          return {
+            Id: note.Id,
+            title: note.title || note.Name,
+            content: note.content || "",
+            folderId: note.folderId?.Id?.toString() || note.folderId?.toString() || "2",
+            Tags: note.Tags || "",
+            tags: note.Tags ? note.Tags.split(',') : [],
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt
+          };
+        }
+      }
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating note:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
+    }
   },
 
   delete: async (id) => {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    const index = notes.findIndex(n => n.Id === parseInt(id));
-    if (index === -1) return false;
-    
-    notes.splice(index, 1);
-    return true;
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await apperClient.deleteRecord('note', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success);
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete note records:${failedDeletions}`);
+          failedDeletions.forEach(record => {
+            if (record.message) console.error(record.message);
+          });
+        }
+        
+        return successfulDeletions.length > 0;
+      }
+      return false;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting note:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return false;
+    }
   }
 };
 
